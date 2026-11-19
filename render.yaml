@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: expense-tracker
+    runtime: static
+    buildCommand: echo "Static frontend; no build step required"
+    staticPublishPath: .
+    autoDeployTrigger: commit

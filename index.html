@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Expense Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <div class="top"><div><h1>Expense tracker</h1><p class="sub" id="month" style="margin:0"></p></div><button class="theme" id="theme" aria-label="Switch to dark mode" title="Switch theme"></button></div>
+  <div id="alerts"></div>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-t="home" aria-selected="true"><span class="nav-icon" aria-hidden="true">◒</span>Overview</button>
+    <button role="tab" data-t="income" aria-selected="false"><span class="nav-icon" aria-hidden="true">↗</span>Income</button>
+    <button role="tab" data-t="add" aria-selected="false"><span class="nav-icon" aria-hidden="true">−</span>Daily expenses</button>
+    <button role="tab" data-t="bills" aria-selected="false"><span class="nav-icon" aria-hidden="true">▤</span>Bills</button>
+    <button role="tab" data-t="kids" aria-selected="false"><span class="nav-icon" aria-hidden="true">◇</span>Children fees</button>
+    <button role="tab" data-t="save" aria-selected="false"><span class="nav-icon" aria-hidden="true">◆</span>Savings</button>
+    <button role="tab" data-t="set" aria-selected="false"><span class="nav-icon" aria-hidden="true">⚙</span>Budget &amp; limit</button>
+  </div>
+
+  <!-- Overview -->
+  <section id="p-home">
+    <div class="panel summary-panel">
+      <div class="big" id="total">₹0</div>
+      <div class="sub" style="margin:2px 0 0">spent this month</div>
+      <div class="meter"><span id="bm"></span></div>
+      <div class="sub" id="bmt" style="margin:0"></div>
+      <div class="bar" id="bar"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="grid">
+      <div class="panel stat stat-income"><span class="stat-icon" aria-hidden="true">↗</span><small>Income this month</small><b id="incomeTotal">₹0</b></div>
+      <div class="panel stat stat-balance"><span class="stat-icon" aria-hidden="true">↔</span><small>Balance this month</small><b id="balance">₹0</b></div>
+      <div class="panel stat stat-expenses"><span class="stat-icon" aria-hidden="true">↘</span><small>Spent today</small><b id="today">₹0</b></div>
+      <div class="panel stat stat-bills"><span class="stat-icon" aria-hidden="true">▤</span><small>Unpaid bills</small><b id="due">₹0</b></div>
+      <div class="panel stat stat-children"><span class="stat-icon" aria-hidden="true">◇</span><small>Children fees</small><b id="kidt">₹0</b></div>
+      <div class="panel stat stat-savings"><span class="stat-icon" aria-hidden="true">◆</span><small>Total savings</small><b id="savt">₹0</b></div>
+    </div>
+  </section>
+
+  <!-- Daily expenses -->
+  <section id="p-income" class="hide">
+    <div class="panel">
+      <form id="incf">
+        <label class="full">Income source<input id="inote" required maxlength="60" placeholder="Salary, allowance, freelance work"></label>
+        <label>Amount (₹)<input id="inamt" type="number" min="0.01" step="any" inputmode="decimal" required></label>
+        <div><button class="btn">Add income</button></div>
+      </form>
+    </div>
+    <div class="panel"><h2>Income history</h2><div id="inlist"></div></div>
+  </section>
+
+  <!-- Daily expenses -->
+  <section id="p-add" class="hide">
+    <div class="panel">
+      <form id="f">
+        <label class="full">What did you spend on<input id="note" required maxlength="60" placeholder="Lunch, bus pass, notebook"></label>
+        <label>Amount (₹)<input id="amt" type="number" min="1" step="any" inputmode="decimal" required></label>
+        <label>Category<select id="cat"></select></label>
+        <div class="full qa" id="qa"><button type="button" data-q="50">+₹50</button><button type="button" data-q="100">+₹100</button><button type="button" data-q="200">+₹200</button><button type="button" data-q="500">+₹500</button></div>
+        <label>Date (automatic)<input id="date" type="date" required readonly></label>
+        <div class="form-actions"><button class="btn expense-action" id="expenseSubmit">Add expense</button><button class="btn s cancel-action hide" id="cancelEdit" type="button">Cancel</button></div>
+      </form>
+    </div>
+    <div class="panel"><h2>Expenses</h2><div class="filters"><input id="q" type="search" placeholder="Search expenses" aria-label="Search expenses"><input id="qdate" type="date" aria-label="Search expenses by date"></div><div class="chips" id="chips"></div><div id="list"></div></div>
+  </section>
+
+  <!-- Bills -->
+  <section id="p-bills" class="hide">
+    <div class="panel">
+      <form id="bf">
+        <label class="full">Bill name<input id="bn" required maxlength="40" placeholder="Electricity, Wi-Fi, rent"></label>
+        <label>Amount (₹)<input id="ba" type="number" min="1" step="any" inputmode="decimal" required></label>
+        <label>Due date<input id="bd" type="date" required></label>
+        <div class="full"><button class="btn">Add bill</button></div>
+      </form>
+    </div>
+    <div class="panel"><h2>Current bills</h2><div id="blist"></div></div>
+  </section>
+
+  <!-- Children fees -->
+  <section id="p-kids" class="hide">
+    <div class="panel">
+      <form id="kf">
+        <label>Child name<input id="kn" required maxlength="30" placeholder="Aarav"></label>
+        <label>Fee type<select id="kt"><option>School fees</option><option>Tuition</option><option>Books &amp; uniform</option><option>Activities</option><option>Transport</option></select></label>
+        <label>Amount (₹)<input id="ka" type="number" min="1" step="any" inputmode="decimal" required></label>
+        <label>Date<input id="kd" type="date" required></label>
+        <div class="full"><button class="btn">Add fee</button></div>
+      </form>
+    </div>
+    <div class="panel"><h2>Fees by child</h2><div id="klist"></div></div>
+  </section>
+
+  <!-- Savings -->
+  <section id="p-save" class="hide">
+    <div class="panel">
+      <h2>Savings goal</h2>
+      <div class="big" id="sv">₹0</div>
+      <div class="meter"><span id="sm"></span></div>
+      <div class="sub" id="smt" style="margin:0"></div>
+    </div>
+    <div class="panel">
+      <form id="sf">
+        <label>Amount saved (₹)<input id="sa" type="number" min="1" step="any" inputmode="decimal" required></label>
+        <label>Note<input id="sn" maxlength="40" placeholder="Monthly saving"></label>
+        <div class="full"><button class="btn">Add to savings</button></div>
+      </form>
+    </div>
+    <div class="panel"><h2>Savings history</h2><div id="slist"></div></div>
+  </section>
+
+  <!-- Settings -->
+  <section id="p-set" class="hide">
+    <div class="panel">
+      <form id="setf">
+        <label>Monthly budget (₹)<input id="sb" type="number" min="0" step="any" inputmode="decimal"></label>
+        <label>Account limit (₹)<input id="sl" type="number" min="0" step="any" inputmode="decimal"></label>
+        <label class="full">Savings goal (₹)<input id="sg" type="number" min="0" step="any" inputmode="decimal"></label>
+        <div class="full"><button class="btn">Save settings</button></div>
+      </form>
+      <div class="data-tools">
+        <button class="btn s" id="exportData" type="button">Download JSON backup</button>
+        <label>Restore JSON backup<input id="importData" type="file" accept="application/json,.json"></label>
+      </div>
+      <p class="sub" style="margin:12px 0 0">You get a warning at 80% of your budget, and an alert when spending crosses your budget or reaches your account limit.</p>
+    </div>
+  </section>
+</main>
+<button class="fab" id="fab" aria-label="Add expense">+</button>
+<div id="toasts" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
